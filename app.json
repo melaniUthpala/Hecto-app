@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Hecto",
+    "slug": "hecto",
+    "scheme": "hecto",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#121212",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Hecto needs your photos to make stencils.",
+          "cameraPermission": "Hecto uses the camera for references and Try On."
+        }
+      ],
+      "expo-sharing"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.hecto.app"
+    },
+    "android": {
+      "package": "com.hecto.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#121212"
+      }
+    },
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#121212"
+    }
+  }
+}
