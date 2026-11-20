@@ -1,3 +1,4 @@
+
 {
   "expo": {
     "name": "Hecto",
@@ -16,7 +17,15 @@
           "cameraPermission": "Hecto uses the camera for references and Try On."
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icon.png",
+          "imageWidth": 200,
+          "backgroundColor": "#121212"
+        }
+      ]
     ],
     "ios": {
       "supportsTablet": false,
@@ -27,13 +36,22 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#121212"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#121212"
-    }
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "0c378a1f-1e7a-4918-acf6-27a4b62e2c56"
+      }
+    },
+    "owner": "hecto_app"
   }
 }
