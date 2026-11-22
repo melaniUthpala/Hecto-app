@@ -1,0 +1,20 @@
+HECTO UPDATE - ANIMATION & BEFORE/AFTER SLIDER
+
+Updated:
+- src/components/BeforeAfter.tsx
+  - Fixed touch-coordinate calculation using the comparison frame's screen position.
+  - Improved horizontal drag handling and kept the slider responsive to changing split props.
+  - Added accessible increment/decrement actions and clearer slider controls.
+- src/components/ui.tsx
+  - Added a short fade + upward entrance animation to shared Screen content.
+  - Added subtle pressed feedback to primary/secondary buttons.
+
+No app routes, screen flows, image assets, or existing features were intentionally removed.
+node_modules, .expo, and .git are excluded from this source archive.
+
+After extracting into your existing C:\hecto project:
+1. Open PowerShell in C:\hecto
+2. Run: npm install
+3. Run: npx expo-doctor
+4. Run: npx expo start
+5. Test the Before/After slider on a real Android phone before creating a new APK.

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, ImageSourcePropType, Pressable, ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native';
+import { Animated, Image, ImageSourcePropType, Pressable, ScrollView, StyleProp, Text, View, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -30,13 +30,30 @@ export const goBack = () => (router.canGoBack() ? router.back() : router.replace
 const go = (href?: string, onPress?: () => void) => () => { onPress?.(); if (href && href !== '#') router.push(href as any); };
 
 /* ---------- Layout ---------- */
-export const Screen = ({ children, scroll = true, pad = 20, style }: { children: React.ReactNode; scroll?: boolean; pad?: number; style?: StyleProp<ViewStyle> }) => (
-  <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: c.bg }}>
-    {scroll
-      ? <ScrollView contentContainerStyle={[{ padding: pad, gap: 16, paddingBottom: 40 }, style]} showsVerticalScrollIndicator={false}>{children}</ScrollView>
-      : <View style={[{ flex: 1, padding: pad }, style]}>{children}</View>}
-  </SafeAreaView>
-);
+export const Screen = ({ children, scroll = true, pad = 20, style }: { children: React.ReactNode; scroll?: boolean; pad?: number; style?: StyleProp<ViewStyle> }) => {
+  const entrance = React.useRef(new Animated.Value(0)).current;
+  React.useEffect(() => {
+    Animated.timing(entrance, {
+      toValue: 1,
+      duration: 320,
+      useNativeDriver: true,
+    }).start();
+  }, [entrance]);
+
+  const enterStyle = {
+    flex: 1,
+    opacity: entrance,
+    transform: [{ translateY: entrance.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }],
+  } as const;
+
+  return (
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: c.bg }}>
+      {scroll
+        ? <Animated.ScrollView style={enterStyle} contentContainerStyle={[{ padding: pad, gap: 16, paddingBottom: 40 }, style]} showsVerticalScrollIndicator={false}>{children}</Animated.ScrollView>
+        : <Animated.View style={[{ flex: 1, padding: pad }, enterStyle, style]}>{children}</Animated.View>}
+    </SafeAreaView>
+  );
+};
 export const Footer = ({ children }: { children: React.ReactNode }) => {
   const { bottom } = useSafeAreaInsets();
   return <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: Math.max(bottom, 16), gap: 10, backgroundColor: c.bg }}>{children}</View>;
@@ -57,7 +74,8 @@ export function Button({ label, href, onPress, variant = 'primary', icon, size =
   return (
     <Pressable disabled={variant === 'disabled'} onPress={go(href, onPress)} accessibilityRole="button"
       style={({ pressed }) => ({ height: size === 'medium' ? 46 : 54, borderRadius: 12, backgroundColor: pressed && variant === 'primary' ? '#6A49E8' : pressed && variant === 'secondary' ? '#303030' : bg,
-        borderWidth: variant === 'ghost' ? 0 : 1, borderColor: bd, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 })}>
+        borderWidth: variant === 'ghost' ? 0 : 1, borderColor: bd, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
+        transform: [{ scale: pressed ? 0.985 : 1 }] })}>
       {icon ? <Icon name={icon} size={19} color={fg} /> : null}
       <Text style={{ ...font(700, 16), color: fg }}>{label}</Text>
     </Pressable>
