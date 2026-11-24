@@ -3,22 +3,18 @@ import { Alert, Image, Pressable, Text, View } from 'react-native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { router } from 'expo-router';
-import { Screen, Footer, H2, IconButton, Button, ToggleRow, Icon } from '../src/components';
+import { Screen, Footer, H2, IconButton, Button, ToggleRow, Icon, Slider } from '../src/components';
 import { img } from '../src/assets';
 import { useApp } from '../src/state';
 import { c, font } from '../src/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Row = ({ l, v }: { l: string; v: string }) => <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12 }}><Text style={{ ...font(500, 15), color: c.muted }}>{l}</Text><Text style={{ ...font(700, 15), color: c.text }}>{v}</Text></View>;
-const Stepper = ({ v, set, step, min, max, fmt }: any) => (
-  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-    <Pressable onPress={() => set(Math.max(min, +(v - step).toFixed(1)))}><Icon name="chev_d" size={22} color={c.text} /></Pressable>
-    <Text style={{ ...font(700, 16), color: c.text, minWidth: 64, textAlign: 'center' }}>{fmt(v)}</Text>
-    <Pressable onPress={() => set(Math.min(max, +(v + step).toFixed(1)))}><Icon name="plus" size={22} color={c.text} /></Pressable>
-  </View>
-);
+
 
 export default function PrintScreen() {
   const { stencil } = useApp();
+  const insets = useSafeAreaInsets();
   const [mirror, setMirror] = useState(true); const [copies, setCopies] = useState(1); const [cm, setCm] = useState(12.8);
   const ratio = stencil ? stencil.cov.h / stencil.cov.w : 1;
   const html = () => {
@@ -37,8 +33,10 @@ export default function PrintScreen() {
   };
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <View style={{ paddingHorizontal: 20, paddingTop: Math.max(insets.top, 12), paddingBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+        <IconButton icon="chev_l" label="Back" /><H2>Print</H2>
+      </View>
       <Screen>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}><IconButton icon="chev_l" label="Back" /><H2>Print</H2></View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 14, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line }}>
           <Icon name="print" size={20} color={c.primaryLight} />
           <View style={{ flex: 1 }}><Text style={{ ...font(700, 15.5), color: c.text }}>System print dialog</Text><Text style={{ ...font(500, 13), color: c.muted }}>Pick any Wi-Fi or Bluetooth printer your phone can see</Text></View>
@@ -49,13 +47,11 @@ export default function PrintScreen() {
         </View>
         <View style={{ borderRadius: 14, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line, paddingHorizontal: 14 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8 }}>
-            <Text style={{ ...font(500, 15), color: c.muted }}>Width on skin</Text>
-            <Stepper v={cm} set={setCm} step={0.5} min={2} max={28} fmt={(v: number) => `${v} cm`} />
+            <View style={{ flex: 1, gap: 4 }}><View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Text style={{ ...font(500, 15), color: c.muted }}>Width on skin</Text><Text style={{ ...font(700, 15), color: c.primaryLight }}>{cm.toFixed(1)} cm</Text></View><Slider value={cm} minimumValue={2} maximumValue={28} step={0.5} onValueChange={setCm} /></View>
           </View>
           <Row l="Height follows the design" v={`${(cm * ratio).toFixed(1)} cm`} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8 }}>
-            <Text style={{ ...font(500, 15), color: c.muted }}>Copies</Text>
-            <Stepper v={copies} set={setCopies} step={1} min={1} max={9} fmt={(v: number) => `${Math.round(v)}`} />
+            <View style={{ flex: 1, gap: 4 }}><View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Text style={{ ...font(500, 15), color: c.muted }}>Copies</Text><Text style={{ ...font(700, 15), color: c.primaryLight }}>{copies}</Text></View><Slider value={copies} minimumValue={1} maximumValue={9} step={1} onValueChange={v => setCopies(Math.round(v))} /></View>
           </View>
         </View>
         <ToggleRow icon="flip" title="Mirror for transfer" sub="Needed for thermal transfer paper" on={mirror} onChange={setMirror} />
